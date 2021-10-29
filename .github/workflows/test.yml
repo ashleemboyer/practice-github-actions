@@ -1,4 +1,4 @@
-on: [deployment_status]
+on: [pull_request, deployment_status]
 
 jobs:
   pa11y:

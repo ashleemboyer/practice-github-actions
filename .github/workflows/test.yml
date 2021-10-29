@@ -14,11 +14,8 @@ jobs:
               repo: context.repo.repo
             })
 
-            for (const comment in comments) {
-              console.log("COMMENT");
-              console.log(comment)
-              console.log()
-            }
+            console.log("COMMENTS")
+            console.log(comments)
 
       - name: Create Comment
         uses: actions/github-script@v5

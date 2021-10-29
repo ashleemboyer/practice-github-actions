@@ -6,6 +6,8 @@ jobs:
     steps:
       - name: Log workflow context
         uses: actions/github-script@v5
+        env:
+          PR_NUMBER: ${{ github.event.number }}
         with:
           script: |
-            console.log('github.event.number', ${{ github.event.number }})
+            console.log('github.event.number', process.env.PR_NUMBER)

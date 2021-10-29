@@ -4,26 +4,27 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: List Comments
+      - name: Comment on PR
         uses: actions/github-script@v5
         with:
           script: |
-            const comments = await github.rest.issues.listComments({
+            const { data: comments } = await github.rest.issues.listComments({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo
             })
 
-            console.log("COMMENTS")
-            console.log(comments)
+            const previousComment = comments.find((comment) => comment.body.startsWith('<!-- comment-for-testing -->'))
+            if (previousComment) {
+              console.log('Need to update previous comment:')
+              console.log(previousComment)
+              return
+            }
 
-      - name: Create Comment
-        uses: actions/github-script@v5
-        with:
-          script: |
-            github.rest.issues.createComment({
+            console.log('Creating new comment...')
+            await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'This is a test :test_tube:'
+              body: '<!-- comment-for-testing --> This is a test :test_tube:'
             })

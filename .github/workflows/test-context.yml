@@ -1,4 +1,4 @@
-on: [pull_request]
+on: [pull_request, deployment_status]
 
 jobs:
   test-context:
@@ -11,4 +11,7 @@ jobs:
             console.log()
             console.log('---> context.issue')
             console.log(context.issue)
+            console.log()
+            console.log('---> context.payload')
+            console.log(context.payload)
             console.log()

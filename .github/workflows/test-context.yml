@@ -1,0 +1,14 @@
+on: [pull_request]
+
+jobs:
+  test-context:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log workflow context
+        uses: actions/github-script@v5
+        with:
+          script: |
+            console.log()
+            console.log('---> Context')
+            console.log(context)
+            console.log()

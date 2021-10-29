@@ -13,48 +13,39 @@ jobs:
       - name: Run pa11y-ci
         id: run-pa11y-ci
         run: |
-          npm run pa11y-ci -- --sitemap "${{ github.event.deployment_status.target_url }}/sitemap.xml" 2>&1 | tee pa11y_output.txt
+          npm run pa11y-ci -- "--sitemap ${{ github.event.deployment_status.target_url }}/sitemap.xml" 2>&1 | tee pa11y_output.txt
           echo ::set-output name=pa11yResults::$(cat pa11y_output.txt)
 
-      - name: Log pa11y-ci results
+      - name: Comment on PR
         uses: actions/github-script@v5
         env:
+          BODY_PREFIX: "<!-- pa11y-results -->"
           PA11Y_RESULTS: ${{ steps.run-pa11y-ci.outputs.pa11yResults }}
         with:
           script: |
-            console.log()
-            console.log('---> RESULTS')
-            console.log(process.env.PA11Y_RESULTS)
+            const commentBody = `${process.env.BODY_PREFIX}<details><summary>pa11y-ci results</summary>\`\`\`${process.env.PA11Y_RESULTS}\`\`\`</details>`
 
-      # - name: Comment on PR
-      #   uses: actions/github-script@v5
-      #   env:
-      #     TEST_OUTPUT: ${{ steps.set-test-variable.outputs.testVariable }}
-      #   with:
-      #     script: |
-      #       const { data: comments } = await github.rest.issues.listComments({
-      #         issue_number: context.issue.number,
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo
-      #       })
+            const { data: comments } = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            })
 
-      #       console.log('Does this work?', process.env.TEST_OUTPUT)
-
-      #       const previousComment = comments.find((comment) => comment.body.startsWith('<!-- comment-for-testing -->'))
-      #       if (previousComment) {
-      #         console.log('Updating comment...')
-      #         await github.rest.issues.updateComment({
-      #           owner: context.repo.owner,
-      #           repo: context.repo.repo,
-      #           comment_id: previousComment.id,
-      #           body: '<!-- comment-for-testing --> This is an updated comment :test_tube:'
-      #         })
-      #       } else {
-      #         console.log('Creating new comment...')
-      #         await github.rest.issues.createComment({
-      #           issue_number: context.issue.number,
-      #           owner: context.repo.owner,
-      #           repo: context.repo.repo,
-      #           body: '<!-- comment-for-testing --> This is a test :test_tube:'
-      #         })
-      #       }
+            const previousComment = comments.find((comment) => comment.body.startsWith(process.env.BODY_PREFIX))
+            if (previousComment) {
+              console.log('Updating comment...')
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: previousComment.id,
+                body: commentBody
+              })
+            } else {
+              console.log('Creating new comment...')
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: commentBody
+              })
+            }

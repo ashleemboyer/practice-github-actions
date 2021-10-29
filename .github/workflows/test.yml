@@ -4,9 +4,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v5
-
       - name: List Comments
+        uses: actions/github-script@v5
         with:
           script: |
             github.rest.issues.listComments({
@@ -16,6 +15,7 @@ jobs:
             })
 
       - name: Create Comment
+        uses: actions/github-script@v5
         with:
           script: |
             github.rest.issues.createComment({

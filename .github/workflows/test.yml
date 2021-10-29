@@ -27,6 +27,14 @@ jobs:
           script: |
             const { promises: fs } = require('fs')
 
+            console.log('SHA', context.sha)
+            const possiblePR = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha
+            })
+            console.log('possiblePR', possiblePR)
+
             const pa11yOutput = await fs.readFile('./pa11y_output.txt', 'utf8')
             const commentBody = `${process.env.BODY_PREFIX}<details><summary>pa11y results</summary><pre><code>${pa11yOutput}</code></pre></details>`
 

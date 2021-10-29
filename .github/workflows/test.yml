@@ -16,15 +16,19 @@ jobs:
 
             const previousComment = comments.find((comment) => comment.body.startsWith('<!-- comment-for-testing -->'))
             if (previousComment) {
-              console.log('Need to update previous comment:')
-              console.log(previousComment)
-              return
+              console.log('Updating comment...')
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: previousComment.id,
+                body: '<!-- comment-for-testing --> This is an updated comment :test_tube:'
+              })
+            } else {
+              console.log('Creating new comment...')
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: '<!-- comment-for-testing --> This is a test :test_tube:'
+              })
             }
-
-            console.log('Creating new comment...')
-            await github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '<!-- comment-for-testing --> This is a test :test_tube:'
-            })

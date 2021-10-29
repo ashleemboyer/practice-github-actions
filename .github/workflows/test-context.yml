@@ -8,6 +8,4 @@ jobs:
         uses: actions/github-script@v5
         with:
           script: |
-            console.log()
-            console.log('---> github event', ${{ github.event }})
-            console.log()
+            console.log('github.event.number', ${{ github.event.number }})

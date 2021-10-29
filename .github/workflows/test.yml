@@ -5,6 +5,9 @@ jobs:
     if: github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
     steps:
+      - name: Install dependencies
+        run: npm ci
+
       - name: Run pa11y-ci
         id: run-pa11y-ci
         run: echo ::set-output name=pa11yResults::$(echo "${{ github.event.deployment_status.target_url }}/sitemap.xml" | xargs npm run pa11y-ci:sitemap)

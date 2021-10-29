@@ -4,8 +4,7 @@
     "build": "next build",
     "postbuild": "next-sitemap",
     "start": "next start",
-    "pa11y-ci": "pa11y-ci",
-    "pa11y-ci:sitemap": "pa11y-ci --sitemap"
+    "pa11y-ci": "pa11y-ci"
   },
   "dependencies": {
     "next": "^12.0.1",

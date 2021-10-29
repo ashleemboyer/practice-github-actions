@@ -12,7 +12,9 @@ jobs:
 
       - name: Run pa11y-ci
         id: run-pa11y-ci
-        run: echo ::set-output name=pa11yResults::$(echo "${{ github.event.deployment_status.target_url }}/sitemap.xml" | xargs npm run pa11y-ci:sitemap)
+        run: |
+          echo "${{ github.event.deployment_status.target_url }}/sitemap.xml" | xargs npm run pa11y-ci:sitemap 2>&1 | tee pa11y_output.txt
+          echo ::set-output name=pa11yResults::$(cat pa11y-results.txt)
 
       - name: Log pa11y-ci results
         uses: actions/github-script@v5

@@ -23,7 +23,11 @@ jobs:
           PA11Y_RESULTS: ${{ steps.run-pa11y-ci.outputs.pa11yResults }}
         with:
           script: |
-            const commentBody = `${process.env.BODY_PREFIX}<details><summary>pa11y-ci results</summary>\`\`\`${process.env.PA11Y_RESULTS}\`\`\`</details>`
+            const commentBody = process.env.BODY_PREFIX + "<details><summary>pa11y-ci results</summary>```" + process.env.PA11Y_RESULTS + "```</details>"
+            console.log('comment body', commentBody)
+            console.log('issue number', context.issue.number)
+            console.log('owner', context.repo.owner)
+            console.log('repo', context.repo.repo)
 
             const { data: comments } = await github.rest.issues.listComments({
               issue_number: context.issue.number,

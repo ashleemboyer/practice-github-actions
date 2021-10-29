@@ -16,39 +16,40 @@ jobs:
           npm run pa11y-ci -- "--sitemap ${{ github.event.deployment_status.target_url }}/sitemap.xml" 2>&1 | tee pa11y_output.txt
           echo ::set-output name=pa11yResults::$(cat pa11y_output.txt)
 
+      - uses: jwalton/gh-find-current-pr@v1
+        id: findPrNumber
+
       - name: Comment on PR
         uses: actions/github-script@v5
         env:
+          PR_NUMBER: ${{ steps.findPrNumber.outputs.pr }}
           BODY_PREFIX: "<!-- pa11y-results -->"
           PA11Y_RESULTS: ${{ steps.run-pa11y-ci.outputs.pa11yResults }}
         with:
           script: |
-            const commentBody = `${process.env.BODY_PREFIX}<details><summary>pa11y results</summary>this is a test</details>`
-            console.log('comment body', commentBody)
-            console.log('context object', context)
+            const commentBody = `${process.env.BODY_PREFIX}<details><summary>pa11y results</summary>\`\`\`${process.env.PA11Y_RESULTS}\`\`\`</details>`
 
-# console.log('Listing comments...')
-# const { data: comments } = await github.rest.issues.listComments({
-#   issue_number: context.issue.number,
-#   owner: context.repo.owner,
-#   repo: context.repo.repo
-# })
+            const { data: comments } = await github.rest.issues.listComments({
+              issue_number: process.env.PR_NUMBER,
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            })
 
-# const previousComment = comments.find((comment) => comment.body.startsWith(process.env.BODY_PREFIX))
-# if (previousComment) {
-#   console.log('Updating comment...')
-#   await github.rest.issues.updateComment({
-#     owner: context.repo.owner,
-#     repo: context.repo.repo,
-#     comment_id: previousComment.id,
-#     body: commentBody
-#   })
-# } else {
-#   console.log('Creating new comment...')
-#   await github.rest.issues.createComment({
-#     issue_number: context.issue.number,
-#     owner: context.repo.owner,
-#     repo: context.repo.repo,
-#     body: commentBody
-#   })
-# }
+            const previousComment = comments.find((comment) => comment.body.startsWith(process.env.BODY_PREFIX))
+            if (previousComment) {
+              console.log('Updating comment...')
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: previousComment.id,
+                body: commentBody
+              })
+            } else {
+              console.log('Creating new comment...')
+              await github.rest.issues.createComment({
+                issue_number: process.env.PR_NUMBER,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: commentBody
+              })
+            }

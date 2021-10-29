@@ -23,33 +23,32 @@ jobs:
           PA11Y_RESULTS: ${{ steps.run-pa11y-ci.outputs.pa11yResults }}
         with:
           script: |
-            const commentBody = process.env.BODY_PREFIX + "<details><summary>pa11y-ci results</summary>```" + process.env.PA11Y_RESULTS + "```</details>"
+            const commentBody = `${process.env.BODY_PREFIX}<details><summary>pa11y results</summary>this is a test</details>`
             console.log('comment body', commentBody)
-            console.log('issue number', context.issue.number)
-            console.log('owner', context.repo.owner)
-            console.log('repo', context.repo.repo)
+            console.log('context object', context)
 
-            const { data: comments } = await github.rest.issues.listComments({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo
-            })
+# console.log('Listing comments...')
+# const { data: comments } = await github.rest.issues.listComments({
+#   issue_number: context.issue.number,
+#   owner: context.repo.owner,
+#   repo: context.repo.repo
+# })
 
-            const previousComment = comments.find((comment) => comment.body.startsWith(process.env.BODY_PREFIX))
-            if (previousComment) {
-              console.log('Updating comment...')
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: previousComment.id,
-                body: commentBody
-              })
-            } else {
-              console.log('Creating new comment...')
-              await github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: commentBody
-              })
-            }
+# const previousComment = comments.find((comment) => comment.body.startsWith(process.env.BODY_PREFIX))
+# if (previousComment) {
+#   console.log('Updating comment...')
+#   await github.rest.issues.updateComment({
+#     owner: context.repo.owner,
+#     repo: context.repo.repo,
+#     comment_id: previousComment.id,
+#     body: commentBody
+#   })
+# } else {
+#   console.log('Creating new comment...')
+#   await github.rest.issues.createComment({
+#     issue_number: context.issue.number,
+#     owner: context.repo.owner,
+#     repo: context.repo.repo,
+#     body: commentBody
+#   })
+# }

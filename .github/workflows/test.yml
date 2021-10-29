@@ -4,12 +4,41 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v5
+      - name: Set a test variable
+        id: set-test-variable
+        run: |
+          testVariable="hello, test"
+          echo ::set-output name=testVariable::$testVariable
+
+      - name: Comment on PR
+        uses: actions/github-script@v5
+        env:
+          TEST_OUTPUT: ${{ steps.set-test-variable.outputs.testVariable }}
         with:
           script: |
-            github.rest.issues.createComment({
+            const { data: comments } = await github.rest.issues.listComments({
               issue_number: context.issue.number,
               owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: 'This is a test :test_tube:'
+              repo: context.repo.repo
             })
+
+            console.log('Does this work?', process.env.TEST_OUTPUT)
+
+            const previousComment = comments.find((comment) => comment.body.startsWith('<!-- comment-for-testing -->'))
+            if (previousComment) {
+              console.log('Updating comment...')
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: previousComment.id,
+                body: '<!-- comment-for-testing --> This is an updated comment :test_tube:'
+              })
+            } else {
+              console.log('Creating new comment...')
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: '<!-- comment-for-testing --> This is a test :test_tube:'
+              })
+            }

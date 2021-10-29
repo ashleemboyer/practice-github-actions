@@ -8,11 +8,17 @@ jobs:
         uses: actions/github-script@v5
         with:
           script: |
-            github.rest.issues.listComments({
+            const comments = await github.rest.issues.listComments({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo
             })
+
+            for (const comment in comments) {
+              console.log("COMMENT");
+              console.log(comment)
+              console.log()
+            }
 
       - name: Create Comment
         uses: actions/github-script@v5

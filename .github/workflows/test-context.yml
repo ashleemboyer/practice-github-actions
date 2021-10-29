@@ -12,7 +12,7 @@ jobs:
       - name: Log workflow context
         uses: actions/github-script@v5
         env:
-          PR_NUMBER: ${{ steps.findPr.outputs.pr }}
+          PR_NUMBER: ${{ steps.findPrNumber.outputs.pr }}
         with:
           script: |
             console.log('pr number', process.env.PR_NUMBER)

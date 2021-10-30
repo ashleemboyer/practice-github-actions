@@ -40,7 +40,7 @@ jobs:
             const asJSON = JSON.parse(lines.find((line) => line.startsWith("{")));
             const { total, passes, errors, results } = asJSON;
 
-            let commentBody = `${process.env.BODY_PREFIX}\n<h2>:microscope: pa11y-results</h2>\n<p>${total} URLs were tested.</p>\n`
+            let commentBody = `${process.env.BODY_PREFIX}\n<h2>:microscope: pa11y-results</h2>\n<p>Number of URLs tested: ${total}.</p>\n`
             if (!errors) {
               commentBody += "<p>No errors were found! :tada:</p>\n"
             } else {
@@ -60,7 +60,7 @@ jobs:
                 });
               });
 
-              commentBody += `<details><summary>See results</summary>${formattedOutput}</details>`;
+              commentBody += `<details><summary>See results</summary>${formattedOutput}</details>\n\n`;
             }
 
             // Get the comments on this PR

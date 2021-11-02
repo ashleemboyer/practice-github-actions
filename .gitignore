@@ -1,3 +1,4 @@
 .next
 node_modules
 pa11y_output.txt
+public/sitemap.xml

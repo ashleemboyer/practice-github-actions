@@ -11,11 +11,15 @@ jobs:
         run: npm ci
 
       - name: Run pa11y-ci
-        id: runPa11yCi
-        run: echo "::set-output name=pa11yOutput::$(npm run pa11y-ci -- --json --sitemap ${{ github.event.deployment_status.target_url }}/sitemap.xml)"
+        id: run-tool
+        run: echo "::set-output name=results::$(npm run pa11y-ci -- --json --sitemap ${{ github.event.deployment_status.target_url }}/sitemap.xml)"
 
       - name: Read pa11y output
-        run: echo "${{ steps.runPa11yCi.outputs.pa11yOutput }}"
+        run: |
+          echo $PA11Y_OUTPUT
+          echo "${{ steps.run-tool.outputs }}"
+        env:
+          PA11Y_OUTPUT: ${{ steps.run-tool.outputs.results }}
 
       # - name: Comment on PR
       #   uses: actions/github-script@v5

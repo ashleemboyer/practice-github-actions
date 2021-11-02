@@ -20,7 +20,7 @@ jobs:
             const { promises: fs } = require('fs')
             const pa11yOutput = await fs.readFile('./output.txt', 'utf8')
             console.log('--- pa11y output ---')
-            console.log(pa11yOutput)
+            console.log(pa11yOutput.split('\n'))
             console.log('--------------------')
 
       # - name: Comment on PR

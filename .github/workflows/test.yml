@@ -19,9 +19,14 @@ jobs:
           script: |
             const { promises: fs } = require('fs')
             const pa11yOutput = await fs.readFile('./output.txt', 'utf8')
-            console.log('--- pa11y output ---')
-            console.log(pa11yOutput.split('\n').find(line => line.startsWith('{')))
-            console.log('--------------------')
+            const jsonLineAsString = pa11yOutput.split('\n').find(line => line.startsWith('{'))
+            try {
+              const asJSON = JSON.parse(jsonLineAsString)
+              console.log(asJSON)
+            } catch (err) {
+              console.error('Was not able to parse as JSON:', err)
+              console.error('Attempted to parse:', jsonLineAsString)
+            }
 
       # - name: Comment on PR
       #   uses: actions/github-script@v5

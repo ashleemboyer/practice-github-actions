@@ -18,7 +18,7 @@ jobs:
         with:
           script: |
             const { promises: fs } = require('fs')
-            const pa11yOutput = await fs.readFile('./pa11y_output.txt', 'utf8')
+            const pa11yOutput = await fs.readFile('./output.txt', 'utf8')
             console.log('--- pa11y output ---')
             console.log(pa11yOutput)
             console.log('--------------------')

@@ -11,15 +11,17 @@ jobs:
         run: npm ci
 
       - name: Run pa11y-ci
-        id: run-tool
-        run: echo "::set-output name=results::$(npm run pa11y-ci -- --json --sitemap ${{ github.event.deployment_status.target_url }}/sitemap.xml)"
+        run: npm run pa11y-ci -- --json --sitemap ${{ github.event.deployment_status.target_url }}/sitemap.xml |& tee output.txt
 
-      - name: Read pa11y output
-        run: |
-          echo $PA11Y_OUTPUT
-          echo "${{ steps.run-tool.outputs }}"
-        env:
-          PA11Y_OUTPUT: ${{ steps.run-tool.outputs.results }}
+      - name: Read pa11y-ci output
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const { promises: fs } = require('fs')
+            const pa11yOutput = await fs.readFile('./pa11y_output.txt', 'utf8')
+            console.log('--- pa11y output ---')
+            console.log(pa11yOutput)
+            console.log('--------------------')
 
       # - name: Comment on PR
       #   uses: actions/github-script@v5
